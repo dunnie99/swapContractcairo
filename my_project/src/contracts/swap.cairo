@@ -9,6 +9,28 @@ mod swaptoken {
 
 
 
+
+    #[event]
+    #[derive(Drop, starknet::Event)]
+    enum Event{
+        TokenSwapped:TokenSwapped,
+        TokenWithdraw:TokenWithdraw
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct TokenSwapped{
+        tokenContract: ContractAddress,
+        user: ContractAddress,
+        amount: u256
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct TokenWithdraw{
+        tokenContract: ContractAddress,
+        amount: u256
+    }
+
+
     // SWAPPING DETAILS
     #[derive(Drop,storage_access::StorageAccess)]
     struct SwapDetail{
@@ -17,7 +39,7 @@ mod swaptoken {
         status: bool,
     }
 
-
+    
 
     //STORAGE
     struct storage {
