@@ -60,6 +60,11 @@ mod swaptoken {
     
     #[external]
     fn swap(ref self:ContractState, amount:u256){
+
+    let caller:ContractAddress = get_caller_address();
+    let address_this = get_contract_address();
+    assert((IERC20Dispatcher{contract_address:token_address}.get_balance_of(caller) >= amount), 'ERC20:Insufficient Balance');
+    IERC20Dispatcher{contract_address:token_address}.transfer_from(caller, address_this, amount);
     
     
     }
