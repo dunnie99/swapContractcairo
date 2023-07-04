@@ -39,17 +39,30 @@ mod swaptoken {
         status: bool,
     }
 
-    
+
+    const tokenPerUSD: u8 = 4_u8;
 
     //STORAGE
     struct storage {
         owner: ContractAddress,
         swapper : LegacyMap::<ContractAddress, SwapDetail>
+        stableTokenAddress: ContractAddress,
+    }
+
+    fn constructor(_owner: ContractAddress, _stableTokenAddress:ContractAddress) {
+        owner::write(_owner);
+        stableTokenAddress::write(_stableTokenAddress);
+
     }
 
 
-    const tokenPerUSD: u8 = 4_u8;
 
+    
+    #[external]
+    fn swap(ref self:ContractState, amount:u256){
+    
+    
+    }
 
 
 
