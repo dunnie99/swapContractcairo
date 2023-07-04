@@ -31,28 +31,19 @@ mod swaptoken {
     }
 
 
-    // SWAPPING DETAILS
-    #[derive(Drop,storage_access::StorageAccess)]
-    struct SwapDetail{
-        tokenContract: ContractAddress,
-        tokenAmount: u256,
-        status: bool,
-    }
-
-
     const tokenPerUSD: u8 = 4_u8;
 
     //STORAGE
     struct storage {
         owner: ContractAddress,
-        swapper : LegacyMap::<ContractAddress, SwapDetail>
         stableTokenAddress: ContractAddress,
+        rewardTokenAddress: ContractAddress,
     }
 
-    fn constructor(_owner: ContractAddress, _stableTokenAddress:ContractAddress) {
+    fn constructor(_owner: ContractAddress, _stableTokenAddress:ContractAddress, _rewardTokenAddress:ContractAddress) {
         owner::write(_owner);
         stableTokenAddress::write(_stableTokenAddress);
-
+        rewardTokenAddress::write(_rewardTokenAddress);
     }
 
 
@@ -63,10 +54,14 @@ mod swaptoken {
 
     let caller:ContractAddress = get_caller_address();
     let address_this = get_contract_address();
-    assert((IERC20Dispatcher{contract_address:token_address}.get_balance_of(caller) >= amount), 'ERC20:Insufficient Balance');
-    IERC20Dispatcher{contract_address:token_address}.transfer_from(caller, address_this, amount);
-    
-    
+    assert((IERC20Dispatcher{contract_address:stableTokenAddress}.get_balance_of(caller) >= amount), 'ERC20:Insufficient Balance');
+    let status:bool = IERC20Dispatcher{contract_address:stableTokenAddress}.transfer_from(caller, address_this, amount);
+    if status == true{
+    let amount2get = amount * tokenPerUSD;
+    IERC20Dispatcher{contract_address:rewardTokenAddress}.transfer(caller, amount);
+    }else{
+    revert("swap failed!");
+    }
     }
 
 
