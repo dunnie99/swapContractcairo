@@ -31,9 +31,10 @@ mod swaptoken {
     }
 
 
-    const tokenPerUSD: u8 = 4_u8;
+    const TOKEN_PER_USD: u8 = 4_u8;
 
     //STORAGE
+    #[storage]
     struct storage {
         owner: ContractAddress,
         stableTokenAddress: ContractAddress,
@@ -66,6 +67,7 @@ mod swaptoken {
         self.emit(Event::TokenSwapped(TokenSwapped{caller, amount}));
     }
 
+    #[external]
     fn withdrawContractToken(ref self:ContractState,amount:u256, token_address:ContractAddress){
         let caller:ContractAddress = get_caller_address();
         IERC20Dispatcher{contract_address:token_address}.transfer(owner, amount);
