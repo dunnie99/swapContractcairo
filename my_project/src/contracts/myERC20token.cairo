@@ -1,9 +1,7 @@
 #[starknet::contract]
 mod Token {
 
-////////////////////////////
-// LIBRARY IMPORTS
-////////////////////////////
+
 use starknet::ContractAddress;
 use new_syntax::interfaces::IERC20;
 use new_syntax::interfaces::IERC20DispatcherTrait;
@@ -11,9 +9,7 @@ use new_syntax::interfaces::IERC20Dispatcher;
 use core::zeroable::Zeroable;
 use starknet::get_caller_address;
 
-////////////////////
-//STORAGE
-///////////////////
+
     #[storage]
     struct Storage{
         _name:felt252,
@@ -24,29 +20,27 @@ use starknet::get_caller_address;
         _allowance:LegacyMap::<(ContractAddress, ContractAddress), u256>
     }
 
-    ///////////////////
-    // EVENTS
-    ///////////////////
-#[event]
-#[derive(Drop, starknet::Event)]
-enum Event {
-Transfer: Transfer,
-Approval:Approval
-}
+    
+    #[event]
+    #[derive(Drop, starknet::Event)]
+    enum Event {
+        Transfer: Transfer,
+        Approval:Approval
+    }
 
-#[derive(Drop, starknet::Event)]
- struct Transfer {
-    sender:ContractAddress,
-    recipient:ContractAddress,
-    amount: u256
- }
+    #[derive(Drop, starknet::Event)]
+    struct Transfer {
+        sender:ContractAddress,
+        recipient:ContractAddress,
+        amount: u256
+    }
 
- #[derive(Drop, starknet::Event)]
- struct Approval {
-    owner:ContractAddress,
-    spender:ContractAddress,
-    amount: u256
- }
+    #[derive(Drop, starknet::Event)]
+    struct Approval {
+        owner:ContractAddress,
+        spender:ContractAddress,
+        amount: u256
+    }
     #[external(v0)]
     impl IERC20Impl of IERC20<ContractState>{
         fn get_name(self:@ContractState) -> felt252{
@@ -99,22 +93,22 @@ Approval:Approval
     }
     }
 
-#[generate_trait]
- impl StorageImpl of StorageTrait{
-   fn _transfer(ref self: ContractState, sender:ContractAddress, recipient:ContractAddress, amount:u256) -> bool{
-    assert(!sender.is_zero(), 'ERC20: transfer_to_zero');
-    assert(!recipient.is_zero(), 'ERC20: transfer_to_zero');
-    self._balances.write(sender, self._balances.read(sender) - amount);
-    self._balances.write(recipient, self._balances.read(recipient) + amount);
-   self.emit(Event::Transfer(Transfer{sender, recipient, amount}));
-    return true;
-   }
+    #[generate_trait]
+    impl StorageImpl of StorageTrait{
+    fn _transfer(ref self: ContractState, sender:ContractAddress, recipient:ContractAddress, amount:u256) -> bool{
+        assert(!sender.is_zero(), 'ERC20: transfer_to_zero');
+        assert(!recipient.is_zero(), 'ERC20: transfer_to_zero');
+        self._balances.write(sender, self._balances.read(sender) - amount);
+        self._balances.write(recipient, self._balances.read(recipient) + amount);
+        self.emit(Event::Transfer(Transfer{sender, recipient, amount}));
+        return true;
+    }
 
    fn _approve(ref self: ContractState, owner:ContractAddress, spender:ContractAddress, amount:u256) -> bool{
-    assert(!spender.is_zero(), 'ERC20: approve zero');
-    self._allowance.write((owner, spender), amount);
-    self.emit(Event::Approval(Approval{owner, spender, amount}));
-    return true;
+        assert(!spender.is_zero(), 'ERC20: approve zero');
+        self._allowance.write((owner, spender), amount);
+        self.emit(Event::Approval(Approval{owner, spender, amount}));
+        return true;
    }
    fn spend_allowance(
             ref self: ContractState, owner: ContractAddress, spender: ContractAddress, amount: u256
