@@ -35,7 +35,7 @@ mod swaptoken {
 
     //STORAGE
     #[storage]
-    struct storage {
+    struct Storage {
         owner: ContractAddress,
         stableTokenAddress: ContractAddress,
         rewardTokenAddress: ContractAddress
@@ -55,7 +55,7 @@ mod swaptoken {
 
         let caller:ContractAddress = get_caller_address();
         let address_this = get_contract_address();
-        assert((IERC20Dispatcher{contract_address:stableTokenAddress}.get_balance_of(caller) >= amount), 'ERC20:Insufficient Bal');
+        assert((IERC20Dispatcher{contract_address:stableTokenAddress}.get_balance_of(caller)) >= amount, 'ERC20:Insufficient Bal');
         let status:bool = IERC20Dispatcher{contract_address:stableTokenAddress}.transfer_from(caller, address_this, amount);
         if status == true{
                 let amount2get = amount * tokenPerUSD;
@@ -70,7 +70,7 @@ mod swaptoken {
     #[external]
     fn withdrawContractToken(ref self:ContractState,amount:u256, token_address:ContractAddress){
         let caller:ContractAddress = get_caller_address();
-        IERC20Dispatcher{contract_address:token_address}.transfer(owner, amount);
+        IERC20Dispatcher{contract_address:token_address}.transfer(self.owner, amount);
         self.emit(Event::TokenWithdraw(TokenWithdraw{caller, amount}));
     }
 
