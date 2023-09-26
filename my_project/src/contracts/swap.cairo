@@ -9,7 +9,6 @@ mod swaptoken {
 
 
 
-
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event{
@@ -47,9 +46,6 @@ mod swaptoken {
         rewardTokenAddress::write(_rewardTokenAddress);
     }
 
-
-
-    
     #[external]
     fn swap(ref self:ContractState, amount:u256){
 
@@ -73,16 +69,6 @@ mod swaptoken {
         IERC20Dispatcher{contract_address:token_address}.transfer(self.owner, amount);
         self.emit(Event::TokenWithdraw(TokenWithdraw{caller, amount}));
     }
-
-
-
-
-
-
-
-
-
-
 
 
 
